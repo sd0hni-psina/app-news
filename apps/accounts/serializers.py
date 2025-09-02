@@ -9,7 +9,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     password_confirm = serializers.CharField(write_only=True)
 
     class Meta:
-        models = User
+        model = User
         fields = (
             'username', 'email', 'password', 'password_confirm',
             'first_name', 'last_name'
@@ -49,4 +49,3 @@ class UserLoginSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Must include email and password.')
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    
