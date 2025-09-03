@@ -49,3 +49,41 @@ class UserLoginSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Must include email and password.')
 
 class UserProfileSerializer(serializers.ModelSerializer):
+    full_name = serializers.ReadOnlyField()
+    posts_count = serializers.SerializerMethodField()
+    comments_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = (
+            'id', 'username', 'email', 'first_name', 'last_name', 'full_name',
+            'avatar', 'bio', 'created_at', 'updated_at', 'posts_count', 'comments_count'
+        )
+        read_only_fields = ('id', 'created_at', 'updated_at')
+    
+    def get_posts_count(self, obj):
+        return obj.posts.count()
+    
+    def get_comments_count(self, obj):
+        return obj.comments.count()
+
+class UserUpdateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = (
+            'first_name', 'last_name', 'avatar', 'bio'
+        )
+
+    def update(self, instance, validated_data):
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
+    
+class ChangePasswordSerializer(serializers.ModelSerializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True,validators=[validate_password])
+    new_password_confrim = serializers.CharField(required=True)
+
+    
