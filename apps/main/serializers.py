@@ -2,11 +2,13 @@ from rest_framework import serializers
 from django.utils.text import slugify
 from .models import Category, Post
 
+
 class CategorySerializer(serializers.ModelSerializer):
+    """Сериализатор для категорий"""
     posts_count = serializers.SerializerMethodField()
 
     class Meta:
-        models = Category
+        model = Category
         fields = ['id', 'name', 'slug', 'description', 'posts_count', 'created_at']
         read_only_fields = ['slug', 'created_at']
 
@@ -19,26 +21,33 @@ class CategorySerializer(serializers.ModelSerializer):
     
 
 class PostListSerializer(serializers.ModelSerializer):
+    """Сериализатор для списка постов"""
     author = serializers.StringRelatedField()
     category = serializers.StringRelatedField()
     comments_count = serializers.ReadOnlyField()
+    is_pinned = serializers.ReadOnlyField()
+    pinned_info = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
         fields = [
-            'id', 'title', 'slug', 'content', 'image',
-            'category', 'author', 'status', 'created_at',
-            'update_at', 'views_count', 'comments_count'
+            'id', 'title', 'slug', 'content', 'image', 'category',
+            'author', 'status', 'created_at', 'updated_at',
+            'views_count', 'comments_count', 'is_pinned', 'pinned_info'
         ]
         read_only_fields = ['slug', 'author', 'views_count']
 
+    def get_pinned_info(self, obj):
+        """Возвращает информацию о закреплении"""
+        return obj.get_pinned_info()
+
     def to_representation(self, instance):
         data = super().to_representation(instance)
+        # Обрезаем контент для списка
         if len(data['content']) > 200:
-            data['count'] = data['content'][:200] + '...'
+            data['content'] = data['content'][:200] + '...'
         return data
-
- 
+    
 class PostDetailSerializer(serializers.ModelSerializer):
     """Сериализатор для детального просмотра поста"""
     author_info = serializers.SerializerMethodField()
@@ -103,3 +112,4 @@ class PostCreateUpdateSerializer(serializers.ModelSerializer):
         if 'title' in validated_data:
             validated_data['slug'] = slugify(validated_data['title'])
         return super().update(instance, validated_data)
+    
