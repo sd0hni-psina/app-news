@@ -3,7 +3,7 @@ from django.conf import settings
 
 # Create your models here.
 
-class Comment(models.Mdoel):
+class Comment(models.Model):
     post = models.ForeignKey(
         'main.Post',
         on_delete=models.CASCADE,

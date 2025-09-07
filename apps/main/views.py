@@ -64,7 +64,7 @@ class PostListCreateView(generics.ListCreateAPIView):
         return PostListSerializer
     
     
-class PostDetailWiew(generics.RetrieveUpdateDestroyAPIView):
+class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.select_related('author', 'category')
     serializer_class = PostDetailSerializer
     permission_classes = [IsAuthorOrReadOnly]
@@ -85,7 +85,7 @@ class PostDetailWiew(generics.RetrieveUpdateDestroyAPIView):
         return Response(serializer.data)
 
 
-class MyPostView(generics.ListAPIView):
+class MyPostsView(generics.ListAPIView):
     serializer_class = PostListSerializer
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]

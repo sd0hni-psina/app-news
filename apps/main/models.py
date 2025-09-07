@@ -51,7 +51,7 @@ class Post(models.Model):
         default='published' 
     )
     created_at = models.DateTimeField(auto_now_add=True)
-    update_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now=True)
     views_count = models.PositiveIntegerField(default=0)
 
     class Meta:
