@@ -73,7 +73,7 @@ class Subscription(models.Model):
         )
     
     @property
-    def days_remainig(self):
+    def days_remaining(self):
         if not self.is_active:
             return 0 
         
